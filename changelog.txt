@@ -1,0 +1,7 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2026.5.17
+  Major Features:
+    - Automatically hide cloud shadows while using the editor controller.
+    - Handles changing, creating, importing, and deleting surfaces.
+    - Multiplayer support. API limitation: Any player using the editor will disable clouds on that surface for all players. 
