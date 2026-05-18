@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2026.5.18
+  Bugfixes:
+    - Fixed clouds not being hidden when viewing other surfaces in remote view in the editor.
+    - Fixed a crash on load after changing mod configuration.
+    - Fixed a crash when closing the editor from remote view of a different surface.
+    - Fixed a crash when closing the editor on a different surface than it was opened while "Move player to editor location on exit" is disabled.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2026.5.17
   Major Features:
