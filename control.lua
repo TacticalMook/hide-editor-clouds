@@ -11,7 +11,7 @@ local rebuild_surfaces = function(event)
   -- Set editor_count and hide clouds on surfaces with editors
   local editor_controller = defines.controllers.editor
   for _, player in pairs(game.connected_players) do
-    if player.controller_type == editor_controller then
+    if player.physical_controller_type  == editor_controller then
       surfaces[player.surface.index].editor_count = surfaces[player.surface.index].editor_count + 1
       surface.show_clouds = false
     end
@@ -36,9 +36,9 @@ script.on_event({
     defines.events.on_player_left_game
   }, function(event)
     local player = game.get_player(event.player_index)
+    local is_editor = player.physical_controller_type  == defines.controllers.editor
     -- Early return if non-editor changed surfaces or joined or left (the most frequent events).
-    local is_editor = player.controller_type == defines.controllers.editor
-    if not is_editor and event.name ~= defines.events.on_player_toggled_map_editor then return end
+    if not is_editor and event.name ~= defines.events.on_player_toggled_map_editor then game.print("early return") print_surfaces() return end
     local index = player.surface.index
     local surface = storage.surfaces[index]
     if not (surface and surface.editor_count) then error(player.surface.name.." in storage is nil") return end
@@ -47,7 +47,7 @@ script.on_event({
       surface.editor_count = surface.editor_count + 1
     else -- Editor left game or player disabled editor
       surface.editor_count = surface.editor_count - 1
-      if surface.editor_count < 0 then error(player.surface.name.." editor_count is negative") end
+      --if surface.editor_count < 0 then error(player.surface.name.." editor_count is negative") end
     end
     game.surfaces[index].show_clouds = surface.editor_count == 0
     -- If on_player_changed_surface, remove editor from the previous surface
@@ -57,9 +57,11 @@ script.on_event({
       surface = storage.surfaces[index]
       if not (surface and surface.editor_count) then error(player.surface.name.." in storage is nil") return end
       surface.editor_count = surface.editor_count - 1
-      if surface.editor_count < 0 then error(player.surface.name.." editor_count is negative") end
+      --if surface.editor_count < 0 then error(player.surface.name.." editor_count is negative") end
       game.surfaces[index].show_clouds = surface.editor_count == 0
     end
+    game.print("return")
+    print_surfaces()
   end)
 
 script.on_event({
@@ -77,7 +79,7 @@ script.on_event(defines.events.on_player_toggled_map_editor,
     local index = player.surface.index
     local surface = storage.surfaces[index] or nil
     if not (surface and surface.editor_count) then error(player.surface.name.." in storage is nil") return end
-    if player.controller_type == defines.controllers.editor then
+    if player.physical_controller_type  == defines.controllers.editor then
       surface.editor_count = surface.editor_count + 1
     else
       surface.editor_count = surface.editor_count - 1
@@ -88,7 +90,7 @@ script.on_event(defines.events.on_player_toggled_map_editor,
 
 script.on_event(defines.events.on_player_changed_surface, function(event)
     local player = game.get_player(event.player_index)
-    if player.controller_type ~= defines.controllers.editor then return end
+    if player.physical_controller_type  ~= defines.controllers.editor then return end
     -- Handle surface the editor joined
     local index = player.surface.index
     local surface = storage.surfaces[index]
@@ -108,7 +110,7 @@ script.on_event(defines.events.on_player_changed_surface, function(event)
 
 script.on_event(defines.events.on_player_joined_game, function(event)
     local player = game.get_player(event.player_index)
-    if player.controller_type ~= defines.controllers.editor then return end
+    if player.physical_controller_type  ~= defines.controllers.editor then return end
     local index = player.surface.index
     local surface = storage.surfaces[index]
     if not (surface and surface.editor_count) then error(player.surface.name .. " is nil") return end
@@ -120,7 +122,7 @@ script.on_event(defines.events.on_player_joined_game, function(event)
 
 script.on_event(defines.events.on_player_left_game, function(event)
     local player = game.get_player(event.player_index)
-    if player.controller_type ~= defines.controllers.editor then return end
+    if player.physical_controller_type  ~= defines.controllers.editor then return end
     local index = player.surface.index
     local surface = storage.surfaces[index]
     if not (surface and surface.editor_count) then error(player.surface.name .. " is nil") return end

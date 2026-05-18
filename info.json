@@ -1,6 +1,6 @@
 {
   "name": "hide-editor-clouds",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "title": "Hide Editor Clouds",
   "description": "Automatically hide cloud shadows while the map editor is open.",
   "author": "TacticalMook",
