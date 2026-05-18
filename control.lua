@@ -1,3 +1,5 @@
+local debug_hec = true
+
 local controllers = {
   [defines.controllers.ghost]     = "ghost",     --[0]
   [defines.controllers.character] = "character", --[1]
@@ -32,11 +34,11 @@ end
 --- Print storage.surfaces table
 --- @param? title A value (usually string) to print as a title
 local print_surfaces = function(title)
-  if true then return end
-  if not storage.surfaces then game.print("storage.surfaces is nil")
-  if title then game.print(title) end
-  else for k, surface in pairs(storage.surfaces) do game.print(k.." editor_count = "..surface.editor_count) end end
-  game.print("---")
+  if debug_hec then
+    if not storage.surfaces then game.print("storage.surfaces is nil")
+    if title then game.print(title) end
+    else for k, surface in pairs(storage.surfaces) do game.print(k.." editor_count = "..surface.editor_count) end end
+  end
 end
 
 --- Print a player's controllers from a player event
@@ -46,14 +48,14 @@ local print_player_controller = function(event)
     game.print(player.surface.name.."; "
       .."   controller: "..controllers[player.controller_type]
       .."   physical_controller: "..controllers[player.physical_controller_type])
-  end)
+  end
 
 script.on_init(rebuild_surfaces)
 
 script.on_configuration_changed(rebuild_surfaces)
 
 script.on_event({
-    defines.events.on_player_toggled_map_editor,
+    defines.events.on_pre_player_toggled_map_editor,
     defines.events.on_player_changed_surface,
     defines.events.on_player_joined_game,
     defines.events.on_player_left_game
@@ -61,26 +63,27 @@ script.on_event({
     local player = game.get_player(event.player_index)
     local is_editor = player.physical_controller_type  == defines.controllers.editor
     -- Early return if non-editor changed surfaces or joined or left (the most frequent events).
-    if not is_editor and event.name ~= defines.events.on_player_toggled_map_editor then print_surfaces("early return") return end
+    if not is_editor and event.name ~= defines.events.on_pre_player_toggled_map_editor then print_surfaces("early return") return end
     local index = player.surface.index
     local surface = storage.surfaces[index]
     if not (surface and surface.editor_count) then error(player.surface.name.." in storage is nil") return end
-    -- Editor joined game, editor changed to this surface, or player enabled editor
-    if is_editor and event.name ~= defines.events.on_player_left_game then
-      surface.editor_count = surface.editor_count + 1
-    else -- Editor left game or player disabled editor
+    -- Editor will soon be disabled or editor left game
+    if is_editor and (   event.name == defines.events.on_pre_player_toggled_map_editor
+                      or event.name == defines.events.on_player_left_game) then
       surface.editor_count = surface.editor_count - 1
-      --if surface.editor_count < 0 then error(player.surface.name.." editor_count is negative") end
+      if surface.editor_count < 0 then error("Event "..event.name..": "..player.surface.name..": editor_count is negative") end
+    else -- Editor will soon be enabled or editor joined game, or editor changed to this surface
+      surface.editor_count = surface.editor_count + 1
     end
     game.surfaces[index].show_clouds = surface.editor_count == 0
-    -- If on_player_changed_surface, remove editor from the previous surface
+    -- If editor changed surfaces, remove them from the previous surface
     if event.name == defines.events.on_player_changed_surface then
       index = event.surface_index -- Previous surface. Can be nil, which is not an error
       if not index then return end
       surface = storage.surfaces[index]
       if not (surface and surface.editor_count) then error(player.surface.name.." in storage is nil") return end
       surface.editor_count = surface.editor_count - 1
-      --if surface.editor_count < 0 then error(player.surface.name.." editor_count is negative") end
+      if surface.editor_count < 0 then error("Event "..event.name..": "..player.surface.name..": editor_count is negative") end
       game.surfaces[index].show_clouds = surface.editor_count == 0
     end
     print_surfaces("return")
@@ -94,12 +97,12 @@ script.on_event({
 script.on_event(defines.events.on_surface_deleted, function(event)
     storage.surfaces[event.surface_index] = nil end)
 
---[==[
+--[[
 script.on_event({
     defines.events.on_player_toggled_map_editor,
     defines.events.on_player_changed_surface
-  }, print_player_controller(event))
-]==]
+  }, function(event) print_player_controller(event) end)
+]]
 
 --[==[Separate event handlers. Does not have parity with the combined event handler
 script.on_event(defines.events.on_player_toggled_map_editor,
