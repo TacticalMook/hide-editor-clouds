@@ -20,6 +20,7 @@ end
 
 --- Print function for crude debugging
 local print_surfaces = function()
+  if true then return end
   if not storage.surfaces then game.print("storage.surfaces is nil")
   else for k, surface in pairs(storage.surfaces) do game.print(k.." editor_count = "..surface.editor_count) end end
   game.print("---")
