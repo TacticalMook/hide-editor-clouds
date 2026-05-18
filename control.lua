@@ -1,4 +1,4 @@
-local debug_hec = true
+local debug_hec = false
 
 local controllers = {
   [defines.controllers.ghost]     = "ghost",     --[0]
@@ -42,7 +42,7 @@ local print_surfaces = function(title)
 end
 
 --- Print a player's controllers from a player event
---- @param event An event that contains player_index (usually on_player_* events)
+--- @param event An event that contains player_index (usually on_player_XX events)
 local print_player_controller = function(event)
     local player = game.get_player(event.player_index)
     game.print(player.surface.name.."; "
