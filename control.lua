@@ -13,15 +13,17 @@ local rebuild_surfaces = function(event)
   for _, player in pairs(game.connected_players) do
     if player.physical_controller_type  == editor_controller then
       surfaces[player.surface.index].editor_count = surfaces[player.surface.index].editor_count + 1
-      surface.show_clouds = false
+      player.surface.show_clouds = false
     end
   end
 end
 
 --- Print function for crude debugging
-local print_surfaces = function()
+--- @param? title A value (usually string) to print as a title
+local print_surfaces = function(title)
   if true then return end
   if not storage.surfaces then game.print("storage.surfaces is nil")
+  if title then game.print(title) end
   else for k, surface in pairs(storage.surfaces) do game.print(k.." editor_count = "..surface.editor_count) end end
   game.print("---")
 end
@@ -39,7 +41,7 @@ script.on_event({
     local player = game.get_player(event.player_index)
     local is_editor = player.physical_controller_type  == defines.controllers.editor
     -- Early return if non-editor changed surfaces or joined or left (the most frequent events).
-    if not is_editor and event.name ~= defines.events.on_player_toggled_map_editor then game.print("early return") print_surfaces() return end
+    if not is_editor and event.name ~= defines.events.on_player_toggled_map_editor then print_surfaces("early return") return end
     local index = player.surface.index
     local surface = storage.surfaces[index]
     if not (surface and surface.editor_count) then error(player.surface.name.." in storage is nil") return end
@@ -61,8 +63,7 @@ script.on_event({
       --if surface.editor_count < 0 then error(player.surface.name.." editor_count is negative") end
       game.surfaces[index].show_clouds = surface.editor_count == 0
     end
-    game.print("return")
-    print_surfaces()
+    print_surfaces("return")
   end)
 
 script.on_event({
