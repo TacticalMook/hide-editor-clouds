@@ -1,8 +1,8 @@
 local controllers = {
-  [defines.controllers.ghost]     = "ghost",
-  [defines.controllers.character] = "character",
-  [defines.controllers.god]       = "god",
---[3]                             = nil,
+  [defines.controllers.ghost]     = "ghost",     --[0]
+  [defines.controllers.character] = "character", --[1]
+  [defines.controllers.god]       = "god",       --[2]
+--[3]                             = nil,         --[3]
   [defines.controllers.editor]    = "editor",
   [defines.controllers.spectator] = "spectator",
   [defines.controllers.cutscene]  = "cutscene",
@@ -29,7 +29,7 @@ local rebuild_surfaces = function(event)
   end
 end
 
---- Print function for crude debugging
+--- Print storage.surfaces table
 --- @param? title A value (usually string) to print as a title
 local print_surfaces = function(title)
   if true then return end
@@ -39,7 +39,7 @@ local print_surfaces = function(title)
   game.print("---")
 end
 
---- Print function for crude debugging
+--- Print a player's controllers from a player event
 --- @param event An event that contains player_index (usually on_player_* events)
 local print_player_controller = function(event)
     local player = game.get_player(event.player_index)
