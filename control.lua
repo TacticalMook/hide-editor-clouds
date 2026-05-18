@@ -1,3 +1,14 @@
+local controllers = {
+  [defines.controllers.ghost]     = "ghost",
+  [defines.controllers.character] = "character",
+  [defines.controllers.god]       = "god",
+--[3]                             = nil,
+  [defines.controllers.editor]    = "editor",
+  [defines.controllers.spectator] = "spectator",
+  [defines.controllers.cutscene]  = "cutscene",
+  [defines.controllers.remote]    = "remote"
+}
+
 --- @params event ConfigurationChangedData or nil
 local rebuild_surfaces = function(event)
   if not (storage and game) then error("storage or game global objects are unavailable") return end
@@ -27,6 +38,15 @@ local print_surfaces = function(title)
   else for k, surface in pairs(storage.surfaces) do game.print(k.." editor_count = "..surface.editor_count) end end
   game.print("---")
 end
+
+--- Print function for crude debugging
+--- @param event An event that contains player_index (usually on_player_* events)
+local print_player_controller = function(event)
+    local player = game.get_player(event.player_index)
+    game.print(player.surface.name.."; "
+      .."   controller: "..controllers[player.controller_type]
+      .."   physical_controller: "..controllers[player.physical_controller_type])
+  end)
 
 script.on_init(rebuild_surfaces)
 
@@ -73,6 +93,13 @@ script.on_event({
 
 script.on_event(defines.events.on_surface_deleted, function(event)
     storage.surfaces[event.surface_index] = nil end)
+
+--[==[
+script.on_event({
+    defines.events.on_player_toggled_map_editor,
+    defines.events.on_player_changed_surface
+  }, print_player_controller(event))
+]==]
 
 --[==[Separate event handlers. Does not have parity with the combined event handler
 script.on_event(defines.events.on_player_toggled_map_editor,
