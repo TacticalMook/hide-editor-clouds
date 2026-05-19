@@ -72,7 +72,7 @@ script.on_event({
                       or event.name == defines.events.on_player_left_game) then
       surface.editor_count = surface.editor_count - 1
       if surface.editor_count < 0 then error("Event "..event.name..": "..player.surface.name..": editor_count is negative") end
-    else -- Editor will soon be enabled or editor joined game, or editor changed to this surface
+    else -- Editor will soon be enabled, or editor joined game, or editor changed to this surface
       surface.editor_count = surface.editor_count + 1
     end
     game.surfaces[index].show_clouds = surface.editor_count == 0
