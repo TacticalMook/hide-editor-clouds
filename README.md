@@ -1,3 +1,5 @@
+<img width="144" height="144" alt="thumbnail" src="https://github.com/TacticalMook/hide-editor-clouds/blob/main/thumbnail.png" />
+
 # Features
 
 - Automatically hide cloud shadows while using the editor controller. Works with `/editor`, mods like [Editor Extensions](https://mods.factorio.com/mod/EditorExtensions), and scripting.
