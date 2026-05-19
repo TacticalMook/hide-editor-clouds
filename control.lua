@@ -44,11 +44,13 @@ end
 --- Print a player's controllers from a player event
 --- @param event An event that contains player_index (usually on_player_XX events)
 local print_player_controller = function(event)
+  if debug_hec then
     local player = game.get_player(event.player_index)
     game.print(player.surface.name.."; "
       .."   controller: "..controllers[player.controller_type]
       .."   physical_controller: "..controllers[player.physical_controller_type])
   end
+end
 
 script.on_init(rebuild_surfaces)
 
