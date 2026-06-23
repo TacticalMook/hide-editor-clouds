@@ -1,11 +1,11 @@
 {
   "name": "hide-editor-clouds",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "title": "Hide Editor Clouds",
   "description": "Automatically hide cloud shadows while the map editor is open.",
   "author": "TacticalMook",
   "contact": "https://forums.factorio.com/memberlist.php?mode=viewprofile&u=193169",
   "homepage": "",
-  "factorio_version": "2.0",
+  "factorio_version": "2.1",
   "dependencies": ["base >= 1.0"]
 }
